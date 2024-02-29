@@ -11,6 +11,7 @@ import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -24,6 +25,7 @@ public class GUI extends JFrame
     //private JLabel label1;
     private JButton loadFile;
     private BorderLayout borderLayout1;
+    private GridLayout gridLayout1;
     private JLabel label2;
     private JButton saveImage;
 
@@ -31,21 +33,28 @@ public class GUI extends JFrame
     {
         super("Load Picture");
         borderLayout1 = new BorderLayout();
+        gridLayout1 = new GridLayout(1,3,5,5); 
         setLayout(borderLayout1);
+        JPanel buttonPanel = new JPanel(gridLayout1);
+      
         //label1 = new JLabel("Label");
 
         loadFile = new JButton("Load File");
         //loadFile.setLocation(10, 10);
-        this.add(loadFile, borderLayout1.PAGE_START);
+       
         ButtonHandler buttonHandler = new ButtonHandler();
         loadFile.addActionListener(buttonHandler);
 
         saveImage = new JButton("Save Image");
         //saveImage.setLocation(10, 30);
-        this.add(saveImage, borderLayout1.PAGE_START);
+  
         ButtonHandler buttonHandler2 = new ButtonHandler();
         saveImage.addActionListener(buttonHandler2);
 
+        buttonPanel.add(loadFile);
+        buttonPanel.add(saveImage);
+        this.add(buttonPanel, borderLayout1.PAGE_START);
+        
         this.label2 = new JLabel();
         add(this.label2, borderLayout1.CENTER);
 
