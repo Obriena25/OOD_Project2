@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
@@ -20,22 +21,30 @@ import java.awt.image.BufferedImage;
 
 public class GUI extends JFrame
 {
-    private JLabel label1;
+    //private JLabel label1;
     private JButton loadFile;
     private BorderLayout borderLayout1;
     private JLabel label2;
+    private JButton saveImage;
 
     public GUI()
     {
         super("Load Picture");
         borderLayout1 = new BorderLayout();
         setLayout(borderLayout1);
-        label1 = new JLabel("Label");
+        //label1 = new JLabel("Label");
 
         loadFile = new JButton("Load File");
+        //loadFile.setLocation(10, 10);
         this.add(loadFile, borderLayout1.PAGE_START);
         ButtonHandler buttonHandler = new ButtonHandler();
         loadFile.addActionListener(buttonHandler);
+
+        saveImage = new JButton("Save Image");
+        //saveImage.setLocation(10, 30);
+        this.add(saveImage, borderLayout1.PAGE_START);
+        ButtonHandler buttonHandler2 = new ButtonHandler();
+        saveImage.addActionListener(buttonHandler2);
 
         this.label2 = new JLabel();
         add(this.label2, borderLayout1.CENTER);
@@ -84,7 +93,10 @@ public class GUI extends JFrame
     }
 
     
+    public void saveImage()
+    {
 
+    }
 
 
 
