@@ -60,30 +60,26 @@ public class GUI extends JFrame implements ItemListener
         filterBox.addItemListener(this);
         comboBoxPanel.add(filterBox);
 
+        this.label2 = new JLabel();
+
         JPanel card1 = new JPanel();
-        card1.add();
+        //card1.add();
         JPanel card2 = new JPanel();
-        card2.add();
+        //card2.add(greyScale(null));
         JPanel card3 = new JPanel();
-        card3.add();
+        //card3.add();
         JPanel card4 = new JPanel();
-        card4.add();
+        //card4.add();
         JPanel card5 = new JPanel();
-        card5.add();
+        //card5.add();
+
+        cards = new JPanel(new CardLayout());
+        cards.add(card1, NOFUNCTIONPANEL);
+        cards.add(card2, GREYSCALEPANEL);
+        cards.add(card3, INVERTCOLORPANEL);
+        cards.add(card4, MIRRORPANEL);
+        cards.add(card5, BLURPANEL);
         
-        // filterBox = new JComboBox(labels);
-        // filterBox.setMaximumRowCount(4);
-        // filterBox.addItemListener(new ItemListener() 
-        // {
-        //     public void itemStateChanged(ItemEvent event)
-        //     {
-        //         if (event.getStateChange() == ItemEvent.SELECTED)
-        //             label1.setText(labels[filterBox.getSelectedIndex()]);
-        //     }
-        // }
-        // );
-
-
 
         loadFile = new JButton("Load File");
         ButtonHandler buttonHandler = new ButtonHandler();
@@ -98,19 +94,26 @@ public class GUI extends JFrame implements ItemListener
 
         buttonPanel.add(loadFile);
         buttonPanel.add(saveImage);
-        buttonPanel.add(filterBox);
+        buttonPanel.add(comboBoxPanel);
+        
         label1 = new JLabel(labels[0]);
         this.add(buttonPanel, borderLayout1.PAGE_START);
 
-        this.label2 = new JLabel();
-        add(this.label2, borderLayout1.CENTER);
+        this.add(cards, borderLayout1.CENTER);
 
         
-        //need a scaling function
-        //add other functions so button doesnt take up entire row
-        //use sub layouts
-
+        add(this.label2, borderLayout1.CENTER);
     }
+
+
+        public void itemStateChanged(ItemEvent evt)
+        {
+            CardLayout cl = (CardLayout) (cards.getLayout());
+            cl.show(cards, (String) evt.getItem());
+        }
+    
+
+    
 
 
     public File ChooseFile()
@@ -164,7 +167,7 @@ public class GUI extends JFrame implements ItemListener
 
     public void greyScale(File file)
     {
-        BufferedImage bufImg= null;
+        BufferedImage bufImg = null;
         
 
         try
@@ -180,8 +183,9 @@ public class GUI extends JFrame implements ItemListener
         int height = bufImg.getHeight();
         int[] pixels = bufImg.getRGB(0, 0, width, height, null, 0, width);
 
-        for (int i = 0; i < pixels.length; i++)
+        for (int i = 0; i < width; i++)
         {
+        
             int p = pixels[i];
             int a = (p >> 24) & 0xff;
             int r = (p >> 16) & 0xff;
@@ -191,27 +195,85 @@ public class GUI extends JFrame implements ItemListener
             int avg = (r + g + b) / 3;
 
             p = (a << 24) | (avg << 16) | (avg << 8) | avg;
-
+            
             pixels[i] = p;
+        
+          
         }
         bufImg.setRGB(0,0, width, height, pixels, 0, width);
-
-    
+      
     }
 
-    public void invertColors()
+    public void invertColors(File file)
     {
+        BufferedImage bufImg = null;
+        
 
+        try 
+        { 
+            bufImg = ImageIO.read(file);
+        } 
+        catch (IOException e) { 
+            System.out.println(e); 
+        } 
+  
+        // Get image width and height 
+        int width = bufImg.getWidth(); 
+        int height = bufImg.getHeight(); 
+  
+        // Convert to negative 
+        for (int y = 0; y < height; y++) { 
+            for (int x = 0; x < width; x++) { 
+                int p = bufImg.getRGB(x, y); 
+                int a = (p >> 24) & 0xff; 
+                int r = (p >> 16) & 0xff; 
+                int g = (p >> 8) & 0xff; 
+                int b = p & 0xff; 
+  
+                // subtract RGB from 255 
+                r = 255 - r; 
+                g = 255 - g; 
+                b = 255 - b; 
+  
+                // set new RGB value 
+                p = (a << 24) | (r << 16) | (g << 8) | b; 
+                bufImg.setRGB(x, y, p); 
+            } 
+        } 
     }
 
-    public void invertYAxis()
+    public void mirrorYAxis(File file)
     {
+        BufferedImage bufImg = null;
+        
 
+        try 
+        { 
+            bufImg = ImageIO.read(file);
+        } 
+        catch (IOException e) { 
+            System.out.println(e); 
+        } 
+  
+        // Get image width and height 
+        int width = bufImg.getWidth(); 
+        int height = bufImg.getHeight(); 
+
+        BufferedImage bufImg2 = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+        for(int y = 0; y < height; y++)
+        {
+            for(int lx = 0, rx = width-1; lx < width; lx++, rx--)
+            {
+                int p = bufImg.getRGB(lx, y);
+                bufImg2.setRGB(rx, y, p);
+            }
+        }
     }
 
     public void blurImage()
     {
-
+        
     }
 
     public void draw()
