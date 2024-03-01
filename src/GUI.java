@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
@@ -16,20 +17,33 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 
-public class GUI extends JFrame
+public class GUI extends JFrame implements ItemListener
 {
-    //private JLabel label1;
+    private JLabel label1;
     private JButton loadFile;
     private BorderLayout borderLayout1;
     private GridLayout gridLayout1;
+    private CardLayout cardLayout1;
     private JLabel label2;
     private JButton saveImage;
+    private JButton greyScale;
+    private JComboBox filterBox;
+    private static final String[] labels = {"Choose Filter", "GreyScale", "Inverted Colors", "Mirrored", "Blur"};
+    private JPanel cards;
+    private final static String NOFUNCTIONPANEL = "Choose Filter";
+    private final static String GREYSCALEPANEL = "GreyScale";
+    private final static String INVERTCOLORPANEL = "Inverted Colors";
+    private final static String MIRRORPANEL = "Mirrored";
+    private final static String BLURPANEL = "Blur";
 
-    public GUI()
+    public GUI() 
     {
         super("Load Picture");
         borderLayout1 = new BorderLayout();
@@ -37,24 +51,57 @@ public class GUI extends JFrame
         setLayout(borderLayout1);
         JPanel buttonPanel = new JPanel(gridLayout1);
       
-        //label1 = new JLabel("Label");
+
+
+        JPanel comboBoxPanel = new JPanel();
+        String comboBoxItems[] = {NOFUNCTIONPANEL, GREYSCALEPANEL, INVERTCOLORPANEL, MIRRORPANEL, BLURPANEL};
+        filterBox = new JComboBox<>(comboBoxItems);
+        filterBox.setEditable(false);
+        filterBox.addItemListener(this);
+        comboBoxPanel.add(filterBox);
+
+        JPanel card1 = new JPanel();
+        card1.add();
+        JPanel card2 = new JPanel();
+        card2.add();
+        JPanel card3 = new JPanel();
+        card3.add();
+        JPanel card4 = new JPanel();
+        card4.add();
+        JPanel card5 = new JPanel();
+        card5.add();
+        
+        // filterBox = new JComboBox(labels);
+        // filterBox.setMaximumRowCount(4);
+        // filterBox.addItemListener(new ItemListener() 
+        // {
+        //     public void itemStateChanged(ItemEvent event)
+        //     {
+        //         if (event.getStateChange() == ItemEvent.SELECTED)
+        //             label1.setText(labels[filterBox.getSelectedIndex()]);
+        //     }
+        // }
+        // );
+
+
 
         loadFile = new JButton("Load File");
-        //loadFile.setLocation(10, 10);
-       
         ButtonHandler buttonHandler = new ButtonHandler();
         loadFile.addActionListener(buttonHandler);
 
         saveImage = new JButton("Save Image");
-        //saveImage.setLocation(10, 30);
-  
         ButtonHandler buttonHandler2 = new ButtonHandler();
         saveImage.addActionListener(buttonHandler2);
 
+
+
+
         buttonPanel.add(loadFile);
         buttonPanel.add(saveImage);
+        buttonPanel.add(filterBox);
+        label1 = new JLabel(labels[0]);
         this.add(buttonPanel, borderLayout1.PAGE_START);
-        
+
         this.label2 = new JLabel();
         add(this.label2, borderLayout1.CENTER);
 
@@ -104,9 +151,73 @@ public class GUI extends JFrame
     
     public void saveImage()
     {
+        JFileChooser saveFile = new JFileChooser();
+        int x = saveFile.showSaveDialog(null);
+        if(x == JFileChooser.APPROVE_OPTION)
+        {
+            //this.label2.setText(saveFile.getSelectedFile().getAbsolutePath());
+        }
+        //check to see if file exists
+            //show confirm dialog
+            //if statement to see if user selected yes
+    }
+
+    public void greyScale(File file)
+    {
+        BufferedImage bufImg= null;
+        
+
+        try
+        {
+            bufImg = ImageIO.read(file);
+        }
+        catch (IOException e)
+        {
+            System.out.println(e);
+        }
+
+        int width = bufImg.getWidth();
+        int height = bufImg.getHeight();
+        int[] pixels = bufImg.getRGB(0, 0, width, height, null, 0, width);
+
+        for (int i = 0; i < pixels.length; i++)
+        {
+            int p = pixels[i];
+            int a = (p >> 24) & 0xff;
+            int r = (p >> 16) & 0xff;
+            int g = (p >> 8) & 0xff;
+            int b = p & 0xff;
+
+            int avg = (r + g + b) / 3;
+
+            p = (a << 24) | (avg << 16) | (avg << 8) | avg;
+
+            pixels[i] = p;
+        }
+        bufImg.setRGB(0,0, width, height, pixels, 0, width);
+
+    
+    }
+
+    public void invertColors()
+    {
 
     }
 
+    public void invertYAxis()
+    {
+
+    }
+
+    public void blurImage()
+    {
+
+    }
+
+    public void draw()
+    {
+
+    }
 
 
 
@@ -127,6 +238,7 @@ public class GUI extends JFrame
             File f = ChooseFile();
             try {
                 loadImage(f);
+                //greyScale(f);
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -136,6 +248,14 @@ public class GUI extends JFrame
 
     }
 
+    // private class GreyScaleHandler implements ActionListener
+    // {
+    //     @Override
+    //     public void actionPerformed(ActionEvent event)
+    //     {
+    //         greyScale();
+    //     }
+    // }
 
 
     
